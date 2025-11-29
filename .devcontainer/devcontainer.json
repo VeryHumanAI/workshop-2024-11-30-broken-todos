@@ -1,5 +1,5 @@
 {
-  "name": "Next.js Todo App",
+  "name": "VeryHumanAI - Workshop 2025-11-30 - Broken Todos",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}
@@ -17,7 +17,16 @@
         "rphlmr.vscode-drizzle-orm",
         "qwtel.sqlite-viewer",
         "cweijan.vscode-database-client2",
-        "ms-vsliveshare.vsliveshare"
+        "ms-vsliveshare.vsliveshare",
+        "orta.vscode-jest",
+        "firsttris.vscode-jest-runner",
+        "ryanluker.vscode-coverage-gutters",
+        "eg2.vscode-npm-script",
+        "eamodio.gitlens",
+        "GitHub.vscode-pull-request-github",
+        "mhutchie.git-graph",
+        "streetsidesoftware.code-spell-checker",
+        "wayou.vscode-todo-highlight"
       ],
       "settings": {
         "editor.formatOnSave": true,
