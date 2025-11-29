@@ -1,0 +1,40 @@
+{
+  "name": "VeryHumanAI - Workshop 2025-11-30 - Broken Todos",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "christian-kohler.path-intellisense",
+        "GitHub.copilot-chat",
+        "rphlmr.vscode-drizzle-orm",
+        "qwtel.sqlite-viewer",
+        "cweijan.vscode-database-client2",
+        "ms-vsliveshare.vsliveshare",
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "npm install",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js App",
+      "onAutoForward": "openPreview"
+    }
+  }
+}
