@@ -1,6 +1,6 @@
 "use client";
 
-import { useOptimistic } from "react";
+import { useOptimistic, useId } from "react";
 import { InferSelectModel } from "drizzle-orm";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -13,6 +13,7 @@ import { reorderTodosAction } from "./actions";
 type Todo = InferSelectModel<typeof todosTable>;
 
 export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
+  const dndContextId = useId();
   const [optimisticTodos, setOptimisticTodos] = useOptimistic<
     Todo[],
     { action: "add" | "remove" | "toggle" | "reorder"; todo: Todo; newIndex?: number }
@@ -89,7 +90,7 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
       )}
 
       {/* Todo Items */}
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext id={dndContextId} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={optimisticTodos} strategy={verticalListSortingStrategy}>
           <ul className="divide-y divide-slate-100">
             {optimisticTodos.map((todo) => (
