@@ -13,6 +13,7 @@
 **Decision**: @dnd-kit/core + @dnd-kit/sortable
 
 **Rationale**:
+
 - **React 19 compatible**: @dnd-kit is hooks-based and works with latest React
 - **Lightweight**: ~15KB minified (vs react-beautiful-dnd ~30KB)
 - **Accessible**: Built-in keyboard support and screen reader announcements
@@ -35,6 +36,7 @@
 **Decision**: Integer `position` column with gap-based numbering (multiples of 1000)
 
 **Rationale**:
+
 - **Simple**: Single integer column, easy to understand and debug
 - **Efficient**: Reordering only updates the moved item's position (in most cases)
 - **Gap strategy**: Initial positions 1000, 2000, 3000... allows insertions without renumbering
@@ -56,12 +58,14 @@
 **Decision**: Use React 19's `useOptimistic` hook with reorder action
 
 **Rationale**:
+
 - **Already in use**: TodoList component uses `useOptimistic` for add/remove/toggle
 - **Native React**: No additional dependencies
 - **Automatic rollback**: If server action fails, state reverts automatically
 - **Consistent pattern**: Matches existing codebase patterns (Constitution: Clarity Over Cleverness)
 
 **Implementation Approach**:
+
 1. On drag end, immediately update optimistic state with new order
 2. Call `reorderTodosAction` server action in background
 3. If action fails, `useOptimistic` automatically rolls back
@@ -74,12 +78,14 @@
 **Decision**: Custom keyboard handler integrated with @dnd-kit's accessibility features
 
 **Rationale**:
+
 - @dnd-kit provides `KeyboardSensor` with customizable key bindings
 - Can intercept Alt+Arrow at the todo item level
 - Triggers the same reorder action as drag-drop for consistency
 - Screen reader announcements built into @dnd-kit's `DndContext`
 
 **Implementation Approach**:
+
 1. Add `onKeyDown` handler to todo item container
 2. Detect Alt+ArrowUp and Alt+ArrowDown
 3. Calculate new position (swap with adjacent item)
@@ -92,12 +98,14 @@
 **Decision**: 6-dot grip icon (⋮⋮) as a separate draggable handle element
 
 **Rationale**:
+
 - **Standard pattern**: Used by Trello, Notion, Linear, Todoist
 - **Clear affordance**: Users recognize grip icons as "draggable"
 - **Non-conflicting**: Won't interfere with future "click to edit" feature
 - **Accessible**: Can be focused and used with keyboard
 
 **Visual Design**:
+
 - Position: Left side, before checkbox
 - Icon: SVG 6-dot grid (2 columns × 3 rows)
 - Hover state: Slightly darker, cursor changes to `grab`
@@ -119,13 +127,13 @@ UPDATE todos SET position = id * 1000;
 
 ## Key Files to Modify
 
-| File | Change |
-|------|--------|
-| `db/schema.ts` | Add `position` column to `todosTable` |
-| `app/actions.ts` | Add `reorderTodosAction`, update `addTodo` to set position, update `getTodos` to order by position |
-| `app/todo-list.tsx` | Wrap in DndContext, add sortable functionality, extend optimistic state |
-| `app/todo.tsx` | Add drag handle, make item sortable |
-| `app/drag-handle.tsx` | New component for grip icon |
+| File                  | Change                                                                                             |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| `db/schema.ts`        | Add `position` column to `todosTable`                                                              |
+| `app/actions.ts`      | Add `reorderTodosAction`, update `addTodo` to set position, update `getTodos` to order by position |
+| `app/todo-list.tsx`   | Wrap in DndContext, add sortable functionality, extend optimistic state                            |
+| `app/todo.tsx`        | Add drag handle, make item sortable                                                                |
+| `app/drag-handle.tsx` | New component for grip icon                                                                        |
 
 ## References
 

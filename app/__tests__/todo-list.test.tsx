@@ -28,6 +28,33 @@ jest.mock("../actions", () => ({
   addTodo: jest.fn(),
   toggleTodoAction: jest.fn(),
   removeTodoAction: jest.fn(),
+  getTodos: jest.fn(),
+  reorderTodosAction: jest.fn(),
+}));
+
+// Mock @dnd-kit for drag-drop testing
+jest.mock("@dnd-kit/core", () => ({
+  DndContext: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="dnd-context" data-ondragend={true}>
+      {children}
+    </div>
+  ),
+  closestCenter: jest.fn(),
+}));
+
+jest.mock("@dnd-kit/sortable", () => ({
+  SortableContext: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="sortable-context">{children}</div>
+  ),
+  verticalListSortingStrategy: jest.fn(),
+}));
+
+jest.mock("@dnd-kit/utilities", () => ({
+  CSS: {
+    Transform: {
+      toString: jest.fn(() => ""),
+    },
+  },
 }));
 
 // Test fixtures
@@ -104,6 +131,27 @@ describe("TodoList Component", () => {
       render(<TodoList initialTodos={multipleTodos} />);
 
       expect(screen.getByTestId("form")).toBeInTheDocument();
+    });
+  });
+
+  describe("Drag and Drop", () => {
+    test("wraps the list with DndContext", () => {
+      render(<TodoList initialTodos={multipleTodos} />);
+
+      expect(screen.getByTestId("dnd-context")).toBeInTheDocument();
+    });
+
+    test("wraps todos with SortableContext", () => {
+      render(<TodoList initialTodos={multipleTodos} />);
+
+      expect(screen.getByTestId("sortable-context")).toBeInTheDocument();
+    });
+
+    test("DndContext has onDragEnd handler", () => {
+      render(<TodoList initialTodos={multipleTodos} />);
+
+      const dndContext = screen.getByTestId("dnd-context");
+      expect(dndContext).toHaveAttribute("data-ondragend", "true");
     });
   });
 

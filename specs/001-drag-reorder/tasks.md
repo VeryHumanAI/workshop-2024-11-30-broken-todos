@@ -165,12 +165,12 @@ Phase 5 (US3: Optimistic)   Phase 6 (US4: A11y)
 
 ### User Story Dependencies
 
-| Story | Depends On | Can Parallelize With |
-|-------|------------|---------------------|
-| US1 (Drag) | Phase 2 (Foundational) | US2 after T012 |
-| US2 (Persist) | US1 T012 (reorderTodosAction) | US1 T013-T023 |
-| US3 (Optimistic) | US1, US2 complete | US4 |
-| US4 (A11y) | US1, US2 complete | US3 |
+| Story            | Depends On                    | Can Parallelize With |
+| ---------------- | ----------------------------- | -------------------- |
+| US1 (Drag)       | Phase 2 (Foundational)        | US2 after T012       |
+| US2 (Persist)    | US1 T012 (reorderTodosAction) | US1 T013-T023        |
+| US3 (Optimistic) | US1, US2 complete             | US4                  |
+| US4 (A11y)       | US1, US2 complete             | US3                  |
 
 ### Within Each User Story
 
@@ -229,15 +229,15 @@ T037 [P] - E2E keyboard test
 
 ### Time Estimates
 
-| Phase | Est. Time | Cumulative |
-|-------|-----------|------------|
-| Setup | 10 min | 10 min |
-| Foundational | 45 min | 55 min |
-| US1 (Drag) | 1.5 hr | 2.5 hr |
-| US2 (Persist) | 30 min | 3 hr |
-| US3 (Optimistic) | 45 min | 3.75 hr |
-| US4 (A11y) | 45 min | 4.5 hr |
-| Polish | 30 min | 5 hr |
+| Phase            | Est. Time | Cumulative |
+| ---------------- | --------- | ---------- |
+| Setup            | 10 min    | 10 min     |
+| Foundational     | 45 min    | 55 min     |
+| US1 (Drag)       | 1.5 hr    | 2.5 hr     |
+| US2 (Persist)    | 30 min    | 3 hr       |
+| US3 (Optimistic) | 45 min    | 3.75 hr    |
+| US4 (A11y)       | 45 min    | 4.5 hr     |
+| Polish           | 30 min    | 5 hr       |
 
 **MVP (US1 + US2)**: ~3 hours  
 **Full Feature**: ~5 hours

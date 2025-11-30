@@ -9,12 +9,12 @@
 
 The existing `todos` table is extended with a `position` column.
 
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | INTEGER | PRIMARY KEY, AUTOINCREMENT | Unique identifier |
-| description | TEXT | NOT NULL | Todo item text |
-| completed | INTEGER (boolean) | NOT NULL, DEFAULT false | Completion status |
-| **position** | INTEGER | NOT NULL, DEFAULT 0 | **NEW**: Sort order (lower = earlier) |
+| Field        | Type              | Constraints                | Description                           |
+| ------------ | ----------------- | -------------------------- | ------------------------------------- |
+| id           | INTEGER           | PRIMARY KEY, AUTOINCREMENT | Unique identifier                     |
+| description  | TEXT              | NOT NULL                   | Todo item text                        |
+| completed    | INTEGER (boolean) | NOT NULL, DEFAULT false    | Completion status                     |
+| **position** | INTEGER           | NOT NULL, DEFAULT 0        | **NEW**: Sort order (lower = earlier) |
 
 ### Position Strategy
 
@@ -70,14 +70,12 @@ return await db.select().from(todosTable).orderBy(asc(todosTable.position));
 await db.insert(todosTable).values({ description });
 
 // After
-const [maxPosition] = await db
-  .select({ max: sql`MAX(position)` })
-  .from(todosTable);
+const [maxPosition] = await db.select({ max: sql`MAX(position)` }).from(todosTable);
 const newPosition = (maxPosition?.max ?? 0) + 1000;
 
-await db.insert(todosTable).values({ 
-  description, 
-  position: newPosition 
+await db.insert(todosTable).values({
+  description,
+  position: newPosition,
 });
 ```
 

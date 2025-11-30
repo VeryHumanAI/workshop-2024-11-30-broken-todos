@@ -21,16 +21,16 @@ Enable users to manually reorder todos via drag-and-drop with a dedicated grip h
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Clarity Over Cleverness | ✅ PASS | Feature is straightforward; drag-drop is a well-known pattern |
+| Principle                     | Status  | Notes                                                            |
+| ----------------------------- | ------- | ---------------------------------------------------------------- |
+| I. Clarity Over Cleverness    | ✅ PASS | Feature is straightforward; drag-drop is a well-known pattern    |
 | II. Server-First Architecture | ✅ PASS | Reorder action will be a Server Action; list renders server-side |
-| III. Explicit Error Handling | ✅ PASS | Plan includes error rollback for failed reorder operations |
-| IV. Type Safety | ✅ PASS | Todo type will be extended with `position` field via Drizzle |
-| V. Pedagogical Intent | ✅ PASS | Feature demonstrates optimistic UI + persistence sync patterns |
-| VI. Test-First Development | ✅ PASS | Will write tests before implementation per TDD workflow |
+| III. Explicit Error Handling  | ✅ PASS | Plan includes error rollback for failed reorder operations       |
+| IV. Type Safety               | ✅ PASS | Todo type will be extended with `position` field via Drizzle     |
+| V. Pedagogical Intent         | ✅ PASS | Feature demonstrates optimistic UI + persistence sync patterns   |
+| VI. Test-First Development    | ✅ PASS | Will write tests before implementation per TDD workflow          |
 
 **Gate Status**: ✅ All principles satisfied. Proceeding to Phase 0.
 
@@ -80,15 +80,15 @@ e2e/
 
 ## Post-Design Constitution Re-Check
 
-*Verified after Phase 1 design artifacts completed.*
+_Verified after Phase 1 design artifacts completed._
 
-| Principle | Status | Design Verification |
-|-----------|--------|---------------------|
-| I. Clarity Over Cleverness | ✅ PASS | @dnd-kit is a standard library; gap-based positioning is simple to understand |
-| II. Server-First Architecture | ✅ PASS | `reorderTodosAction` is a server action; client only handles UI |
-| III. Explicit Error Handling | ✅ PASS | Server action logs errors and re-throws for optimistic rollback |
-| IV. Type Safety | ✅ PASS | `position` field added to Drizzle schema with proper types |
-| V. Pedagogical Intent | ✅ PASS | Demonstrates real-world patterns: optimistic UI, drag-drop, persistence |
-| VI. Test-First Development | ✅ PASS | Quickstart specifies tests before each implementation phase |
+| Principle                     | Status  | Design Verification                                                           |
+| ----------------------------- | ------- | ----------------------------------------------------------------------------- |
+| I. Clarity Over Cleverness    | ✅ PASS | @dnd-kit is a standard library; gap-based positioning is simple to understand |
+| II. Server-First Architecture | ✅ PASS | `reorderTodosAction` is a server action; client only handles UI               |
+| III. Explicit Error Handling  | ✅ PASS | Server action logs errors and re-throws for optimistic rollback               |
+| IV. Type Safety               | ✅ PASS | `position` field added to Drizzle schema with proper types                    |
+| V. Pedagogical Intent         | ✅ PASS | Demonstrates real-world patterns: optimistic UI, drag-drop, persistence       |
+| VI. Test-First Development    | ✅ PASS | Quickstart specifies tests before each implementation phase                   |
 
 **Post-Design Gate**: ✅ All principles satisfied. Ready for Phase 2 task generation.

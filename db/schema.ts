@@ -4,4 +4,5 @@ export const todosTable = sqliteTable("todos", {
   id: integer().primaryKey({ autoIncrement: true }),
   description: text().notNull(),
   completed: integer({ mode: "boolean" }).notNull().default(false),
+  position: integer().notNull().default(0),
 });

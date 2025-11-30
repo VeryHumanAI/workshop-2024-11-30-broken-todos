@@ -10,11 +10,9 @@
 Persists a new todo order after drag-drop or keyboard reorder.
 
 **Signature**:
+
 ```typescript
-async function reorderTodosAction(
-  todoId: number, 
-  newPosition: number
-): Promise<void>
+async function reorderTodosAction(todoId: number, newPosition: number): Promise<void>;
 ```
 
 **Parameters**:
@@ -24,11 +22,13 @@ async function reorderTodosAction(
 | newPosition | number | New position value for the todo |
 
 **Behavior**:
+
 1. Update the todo's `position` to `newPosition`
 2. Call `revalidatePath("/")` to refresh the page data
 3. Throw on database error (caught by error boundary)
 
 **Example Usage**:
+
 ```typescript
 // Move todo #5 to position 2500 (between 2000 and 3000)
 await reorderTodosAction(5, 2500);
@@ -41,20 +41,20 @@ await reorderTodosAction(5, 2500);
 **Change**: Auto-assign position to new todos.
 
 **Before**:
+
 ```typescript
 await db.insert(todosTable).values({ description });
 ```
 
 **After**:
+
 ```typescript
-const [maxPosition] = await db
-  .select({ max: sql`MAX(position)` })
-  .from(todosTable);
+const [maxPosition] = await db.select({ max: sql`MAX(position)` }).from(todosTable);
 const newPosition = (maxPosition?.max ?? 0) + 1000;
 
-await db.insert(todosTable).values({ 
-  description, 
-  position: newPosition 
+await db.insert(todosTable).values({
+  description,
+  position: newPosition,
 });
 ```
 
@@ -63,16 +63,15 @@ await db.insert(todosTable).values({
 **Change**: Return todos ordered by position.
 
 **Before**:
+
 ```typescript
 return await db.select().from(todosTable);
 ```
 
 **After**:
+
 ```typescript
-return await db
-  .select()
-  .from(todosTable)
-  .orderBy(asc(todosTable.position), asc(todosTable.id));
+return await db.select().from(todosTable).orderBy(asc(todosTable.position), asc(todosTable.id));
 ```
 
 **Note**: Secondary sort by `id` ensures deterministic order if positions are equal.
@@ -82,11 +81,7 @@ return await db
 Position calculation happens client-side before calling `reorderTodosAction`.
 
 ```typescript
-function calculateNewPosition(
-  todos: Todo[],
-  fromIndex: number,
-  toIndex: number
-): number {
+function calculateNewPosition(todos: Todo[], fromIndex: number, toIndex: number): number {
   // Moving down in list
   if (toIndex > fromIndex) {
     const before = todos[toIndex];
@@ -97,7 +92,7 @@ function calculateNewPosition(
     }
     return Math.floor((before.position + after.position) / 2);
   }
-  
+
   // Moving up in list
   const after = todos[toIndex];
   const before = todos[toIndex - 1];
@@ -116,11 +111,8 @@ All server actions follow the constitution's error handling principle:
 ```typescript
 export async function reorderTodosAction(todoId: number, newPosition: number) {
   try {
-    await db
-      .update(todosTable)
-      .set({ position: newPosition })
-      .where(eq(todosTable.id, todoId));
-    
+    await db.update(todosTable).set({ position: newPosition }).where(eq(todosTable.id, todoId));
+
     revalidatePath("/");
   } catch (error) {
     // Log error for debugging

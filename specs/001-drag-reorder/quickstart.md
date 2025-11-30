@@ -134,8 +134,8 @@ function TodoList({ initialTodos }) {
 ### Sortable Todo (todo.tsx)
 
 ```tsx
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 function Todo({ item }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
