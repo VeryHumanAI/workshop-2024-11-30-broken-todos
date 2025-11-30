@@ -27,10 +27,25 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
   });
 
   return (
-    <div className="space-y-3">
-      {optimisticTodos.map((todo) => (
-        <TodoComponent key={todo.id} item={todo} />
-      ))}
+    <div className="divide-y divide-slate-100">
+      {/* Empty State */}
+      {optimisticTodos.length === 0 && (
+        <div className="py-12 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-3">
+            <span className="text-2xl">📝</span>
+          </div>
+          <p className="text-slate-500">No todos yet. Add one below!</p>
+        </div>
+      )}
+      
+      {/* Todo Items */}
+      <ul className="divide-y divide-slate-100">
+        {optimisticTodos.map((todo) => (
+          <TodoComponent key={todo.id} item={todo} />
+        ))}
+      </ul>
+      
+      {/* Add Todo Form */}
       <Form />
     </div>
   );
