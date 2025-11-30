@@ -21,16 +21,16 @@ Display a "X of Y completed" count above the todo list that updates in real-time
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Clarity Over Cleverness | ✅ Pass | Simple derived count, no complex logic |
+| Principle                     | Status  | Notes                                                             |
+| ----------------------------- | ------- | ----------------------------------------------------------------- |
+| I. Clarity Over Cleverness    | ✅ Pass | Simple derived count, no complex logic                            |
 | II. Server-First Architecture | ✅ Pass | Count is client-side derived value (appropriate for real-time UI) |
-| III. Explicit Error Handling | ✅ Pass | No error states needed (count is always computable) |
-| IV. Type Safety | ✅ Pass | Will use existing `Todo` type from Drizzle |
-| V. Pedagogical Intent | ✅ Pass | Simple feature, teaches optimistic UI patterns |
-| VI. Test-First Development | ✅ Pass | Will write tests before implementation |
+| III. Explicit Error Handling  | ✅ Pass | No error states needed (count is always computable)               |
+| IV. Type Safety               | ✅ Pass | Will use existing `Todo` type from Drizzle                        |
+| V. Pedagogical Intent         | ✅ Pass | Simple feature, teaches optimistic UI patterns                    |
+| VI. Test-First Development    | ✅ Pass | Will write tests before implementation                            |
 
 **Pre-Phase 0**: All gates pass ✅  
 **Post-Phase 1 Re-check**: All gates still pass ✅ (design remains simple, no new violations)

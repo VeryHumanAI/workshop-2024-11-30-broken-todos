@@ -13,12 +13,12 @@ This feature does NOT add new entities or modify the database schema. The count 
 
 The existing `todosTable` schema remains unchanged:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| id | integer | Primary key, auto-increment |
-| description | text | Todo text content |
-| completed | boolean | Whether the todo is done |
-| position | integer | Sort order for drag-and-drop |
+| Field       | Type    | Description                  |
+| ----------- | ------- | ---------------------------- |
+| id          | integer | Primary key, auto-increment  |
+| description | text    | Todo text content            |
+| completed   | boolean | Whether the todo is done     |
+| position    | integer | Sort order for drag-and-drop |
 
 ## Derived Values (New)
 
@@ -26,10 +26,10 @@ The existing `todosTable` schema remains unchanged:
 
 A computed value, not stored in the database.
 
-| Property | Type | Derivation |
-|----------|------|------------|
+| Property  | Type   | Derivation                              |
+| --------- | ------ | --------------------------------------- |
 | completed | number | `todos.filter(t => t.completed).length` |
-| total | number | `todos.length` |
+| total     | number | `todos.length`                          |
 
 ### Display Logic
 

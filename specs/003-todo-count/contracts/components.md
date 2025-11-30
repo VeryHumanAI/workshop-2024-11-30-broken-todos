@@ -22,10 +22,10 @@ interface TodoCountProps {
 
 **Behavior**:
 
-| Input State | Output |
-|-------------|--------|
-| `todos.length === 0` | Renders "Add your first todo!" |
-| `todos.length > 0` | Renders "{completed} of {total} completed" |
+| Input State          | Output                                     |
+| -------------------- | ------------------------------------------ |
+| `todos.length === 0` | Renders "Add your first todo!"             |
+| `todos.length > 0`   | Renders "{completed} of {total} completed" |
 
 **Accessibility**:
 

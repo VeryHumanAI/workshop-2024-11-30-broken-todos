@@ -30,6 +30,7 @@ const [optimisticTodos, setOptimisticTodos] = useOptimistic<
 **Context**: Spec says "above the todo list, in the header area below 'My Todos' title."
 
 **Finding**: Two options identified:
+
 - **Option A**: Render in `page.tsx` (Server Component) - Would require passing count from server
 - **Option B**: Render inside `todo-list.tsx` (Client Component) - Has access to optimistic state
 
@@ -37,7 +38,8 @@ const [optimisticTodos, setOptimisticTodos] = useOptimistic<
 
 **Rationale**: The count must update optimistically. Only `todo-list.tsx` has access to `optimisticTodos`. Rendering in `page.tsx` would only show server state and not update until revalidation.
 
-**Alternatives considered**: 
+**Alternatives considered**:
+
 - Using React Context to share state: Rejected—adds complexity for no benefit
 - Lifting state to page.tsx: Rejected—would break server component pattern
 
@@ -46,12 +48,16 @@ const [optimisticTodos, setOptimisticTodos] = useOptimistic<
 **Context**: SC-005 requires screen reader announcements via `aria-live="polite"`.
 
 **Finding**: The codebase already has an aria-live region pattern in `todo-list.tsx`:
+
 ```tsx
-{/* Screen reader announcements */}
-<div aria-live="polite" aria-atomic="true" className="sr-only"></div>
+{
+  /* Screen reader announcements */
+}
+<div aria-live="polite" aria-atomic="true" className="sr-only"></div>;
 ```
 
 **Decision**: The count display will use `aria-live="polite"` directly on the visible element, not a hidden announcer. This is appropriate because:
+
 1. The count is always visible (not a transient notification)
 2. Changes are non-urgent (polite, not assertive)
 3. The element content IS the announcement
@@ -63,6 +69,7 @@ const [optimisticTodos, setOptimisticTodos] = useOptimistic<
 **Context**: Must fit visually with existing header design.
 
 **Finding**: Current header in `page.tsx`:
+
 ```tsx
 <p className="text-lg text-slate-500">Stay organized, get things done</p>
 ```
@@ -73,12 +80,12 @@ const [optimisticTodos, setOptimisticTodos] = useOptimistic<
 
 ## Summary of Decisions
 
-| Question | Decision |
-|----------|----------|
-| State source | Derive from `optimisticTodos` prop |
-| Render location | Inside `todo-list.tsx`, above todo items |
-| Accessibility | `aria-live="polite"` on visible count element |
-| Styling | `text-sm text-slate-500`, inside card header |
+| Question        | Decision                                      |
+| --------------- | --------------------------------------------- |
+| State source    | Derive from `optimisticTodos` prop            |
+| Render location | Inside `todo-list.tsx`, above todo items      |
+| Accessibility   | `aria-live="polite"` on visible count element |
+| Styling         | `text-sm text-slate-500`, inside card header  |
 
 ## Unresolved Items
 

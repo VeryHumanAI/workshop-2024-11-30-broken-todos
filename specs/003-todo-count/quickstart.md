@@ -13,6 +13,7 @@
 ## What You're Building
 
 A "X of Y completed" count display that:
+
 1. Shows above the todo list
 2. Updates instantly when todos are added/removed/toggled
 3. Shows "Add your first todo!" when the list is empty
@@ -64,12 +65,12 @@ npm run test:e2e
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `app/todo-count.tsx` | NEW: Count display component |
-| `app/todo-list.tsx` | MODIFY: Add TodoCount rendering |
-| `app/__tests__/todo-count.test.tsx` | NEW: Component tests |
-| `e2e/todo-count.spec.ts` | NEW: E2E tests |
+| File                                | Purpose                         |
+| ----------------------------------- | ------------------------------- |
+| `app/todo-count.tsx`                | NEW: Count display component    |
+| `app/todo-list.tsx`                 | MODIFY: Add TodoCount rendering |
+| `app/__tests__/todo-count.test.tsx` | NEW: Component tests            |
+| `e2e/todo-count.spec.ts`            | NEW: E2E tests                  |
 
 ## Testing Commands
 
