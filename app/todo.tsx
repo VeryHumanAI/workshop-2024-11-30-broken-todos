@@ -53,7 +53,7 @@ export function Todo({ item }: { item: InferSelectModel<typeof todosTable> }) {
   };
 
   return (
-    <li className="group flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors duration-150">
+    <li className="group flex items-center justify-between px-5 py-4 transition-colors duration-150 hover:bg-slate-50">
       {showConfetti && (
         <ReactConfetti
           width={windowSize.width}
@@ -65,46 +65,41 @@ export function Todo({ item }: { item: InferSelectModel<typeof todosTable> }) {
       <div className="flex w-full items-center gap-4">
         {/* Custom Checkbox */}
         <button
-          className={`
-            flex items-center justify-center w-6 h-6 rounded-full border-2 transition-all duration-200
-            ${item.completed 
-              ? 'bg-gradient-to-br from-indigo-500 to-purple-600 border-indigo-500 shadow-md shadow-indigo-200' 
-              : 'border-slate-300 hover:border-indigo-400 hover:shadow-sm'
-            }
-            ${isPending ? 'opacity-50' : ''}
-          `}
+          className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all duration-200 ${
+            item.completed
+              ? "border-indigo-500 bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md shadow-indigo-200"
+              : "border-slate-300 hover:border-indigo-400 hover:shadow-sm"
+          } ${isPending ? "opacity-50" : ""} `}
           onClick={handleToggle}
           disabled={isPending}
           aria-label={item.completed ? "Mark as incomplete" : "Mark as complete"}
         >
           {item.completed && (
-            <svg className="w-3.5 h-3.5 text-white animate-check" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <svg
+              className="animate-check h-3.5 w-3.5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={3}
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           )}
         </button>
-        
+
         {/* Todo Text */}
-        <span className={`
-          flex-1 text-base transition-all duration-200
-          ${item.completed 
-            ? 'text-slate-400 line-through' 
-            : 'text-slate-700'
-          }
-        `}>
+        <span
+          className={`flex-1 text-base transition-all duration-200 ${
+            item.completed ? "text-slate-400 line-through" : "text-slate-700"
+          } `}
+        >
           {item.description}
         </span>
       </div>
-      
+
       {/* Delete Button */}
       <button
-        className="
-          opacity-0 group-hover:opacity-100 
-          p-2 rounded-lg text-slate-400 
-          hover:text-red-500 hover:bg-red-50 
-          transition-all duration-150
-          focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-200
-        "
+        className="rounded-lg p-2 text-slate-400 opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 focus:opacity-100 focus:ring-2 focus:ring-red-200 focus:outline-none"
         onClick={handleRemove}
         disabled={isPending}
         aria-label="Delete todo"
@@ -115,7 +110,7 @@ export function Todo({ item }: { item: InferSelectModel<typeof todosTable> }) {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-5 h-5"
+          className="h-5 w-5"
         >
           <path
             strokeLinecap="round"
