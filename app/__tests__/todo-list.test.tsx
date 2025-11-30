@@ -40,6 +40,10 @@ jest.mock("@dnd-kit/core", () => ({
     </div>
   ),
   closestCenter: jest.fn(),
+  KeyboardSensor: jest.fn(),
+  PointerSensor: jest.fn(),
+  useSensor: jest.fn(() => ({})),
+  useSensors: jest.fn(() => []),
 }));
 
 jest.mock("@dnd-kit/sortable", () => ({
@@ -47,6 +51,7 @@ jest.mock("@dnd-kit/sortable", () => ({
     <div data-testid="sortable-context">{children}</div>
   ),
   verticalListSortingStrategy: jest.fn(),
+  sortableKeyboardCoordinates: jest.fn(),
 }));
 
 jest.mock("@dnd-kit/utilities", () => ({
@@ -59,17 +64,18 @@ jest.mock("@dnd-kit/utilities", () => ({
 
 // Test fixtures
 const multipleTodos = [
-  { id: 1, description: "Buy groceries", completed: false },
-  { id: 2, description: "Walk the dog", completed: true },
-  { id: 3, description: "Read a book", completed: false },
+  { id: 1, description: "Buy groceries", completed: false, position: 1000 },
+  { id: 2, description: "Walk the dog", completed: true, position: 2000 },
+  { id: 3, description: "Read a book", completed: false, position: 3000 },
 ];
 
-const singleTodo = [{ id: 1, description: "Only todo", completed: false }];
+const singleTodo = [{ id: 1, description: "Only todo", completed: false, position: 1000 }];
 
 const emptyTodos: Array<{
   id: number;
   description: string;
   completed: boolean;
+  position: number;
 }> = [];
 
 describe("TodoList Component", () => {

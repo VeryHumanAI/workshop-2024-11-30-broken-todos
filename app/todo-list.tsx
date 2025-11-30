@@ -2,8 +2,20 @@
 
 import { useOptimistic, useId } from "react";
 import { InferSelectModel } from "drizzle-orm";
-import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  DndContext,
+  closestCenter,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 
 import { todosTable } from "@/db/schema";
 import { Todo as TodoComponent } from "./todo";
@@ -14,6 +26,14 @@ type Todo = InferSelectModel<typeof todosTable>;
 
 export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
   const dndContextId = useId();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const [optimisticTodos, setOptimisticTodos] = useOptimistic<
     Todo[],
     { action: "add" | "remove" | "toggle" | "reorder"; todo: Todo; newIndex?: number }
@@ -90,8 +110,16 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
       )}
 
       {/* Todo Items */}
-      <DndContext id={dndContextId} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={optimisticTodos} strategy={verticalListSortingStrategy}>
+      <DndContext
+        id={dndContextId}
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={optimisticTodos.map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
           <ul className="divide-y divide-slate-100">
             {optimisticTodos.map((todo) => (
               <TodoComponent key={todo.id} item={todo} allTodos={optimisticTodos} />
