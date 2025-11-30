@@ -48,11 +48,11 @@ A developer wants to run end-to-end tests that simulate real user interactions i
 
 **Why this priority**: E2E tests validate the full stack works together. They catch integration issues that unit tests miss. Important for a learning environment to show the testing pyramid.
 
-**Independent Test**: Can be fully tested by running `npm run test:e2e` with a local dev server (or test server) running.
+**Independent Test**: Can be fully tested by running `npm run test:e2e`—Playwright auto-starts the dev server.
 
 **Acceptance Scenarios**:
 
-1. **Given** the app is running, **When** I run `npm run test:e2e`, **Then** Playwright launches a browser and executes all `*.spec.ts` files in `e2e/`
+1. **Given** no server is running, **When** I run `npm run test:e2e`, **Then** Playwright auto-starts the dev server, launches a browser, executes all `*.spec.ts` files in `e2e/`, and shuts down the server
 2. **Given** the home page loads, **When** Playwright visits `/`, **Then** the todo list is visible
 3. **Given** an empty input, **When** Playwright types "Buy milk" and submits, **Then** "Buy milk" appears in the todo list
 4. **Given** a todo exists, **When** Playwright clicks the checkbox, **Then** the todo shows as completed (with confetti!)
@@ -96,7 +96,7 @@ Tests should automatically run when a pull request is opened, ensuring no broken
 
 - What happens when a test imports a client component that uses `window`? (Jest needs jsdom environment)
 - How do we handle `useTransition` and async state in component tests? (May need `act()` wrapper)
-- What happens when Playwright tests run but the dev server isn't started? (Need clear error or auto-start)
+- What happens when Playwright tests run but the dev server isn't started? → Resolved: Playwright auto-starts via `webServer` config
 - How do we test server actions that call `revalidatePath`? (Needs mocking)
 - What if database mocks get out of sync with the real schema? (Need schema-aware mocks)
 
@@ -120,6 +120,11 @@ Tests should automatically run when a pull request is opened, ensuring no broken
 - **FR-014**: System MUST include accessibility tests using jest-axe for component tests
 - **FR-015**: System MUST provide seed functions in `db/seeds/` for E2E test data setup
 - **FR-016**: System MUST provide `npm run test:watch` for TDD development workflow
+- **FR-017**: Playwright config MUST use `webServer` to auto-start dev server before E2E tests
+- **FR-018**: E2E tests MUST use seed functions in `beforeEach`/`beforeAll` to set up test database state
+- **FR-019**: E2E tests MUST clear the database in `beforeEach` before seeding to ensure test isolation
+- **FR-020**: Playwright config MUST NOT use automatic retries (`retries: 0`)—flaky tests should be fixed
+- **FR-021**: Playwright config MUST test Chromium only (no Firefox/WebKit in CI)
 
 ### Non-Functional Requirements
 
@@ -144,6 +149,16 @@ Tests should automatically run when a pull request is opened, ensuring no broken
 - **SC-005**: A new developer can follow AGENTS.md to write their first test within 10 minutes
 - **SC-006**: Database mock correctly intercepts all Drizzle operations (insert, select, update, delete)
 
+## Clarifications
+
+### Session 2025-11-30
+
+- Q: How should Playwright handle dev server startup for E2E tests? → A: Playwright auto-starts dev server via `webServer` config
+- Q: How should E2E tests set up specific database state? → A: Tests call seed functions directly in `beforeEach`/`beforeAll` hooks
+- Q: How should tests handle cleanup to avoid state leaking between tests? → A: Clear database in `beforeEach` before seeding (each test starts fresh)
+- Q: How should flaky E2E tests be handled? → A: No retries—flaky tests should be fixed, not hidden (learning environment)
+- Q: Which browsers should Playwright test against in CI? → A: Chromium only (fast, simple, sufficient for learning)
+
 ## Decisions
 
 1. **Snapshot testing**: Skip for now—brittle and noisy for a learning environment
@@ -154,18 +169,23 @@ Tests should automatically run when a pull request is opened, ensuring no broken
 6. **Accessibility testing**: Include `jest-axe` for automated a11y checks in component tests
 7. **Test file organization**: `app/__tests__/` for unit/component tests, `e2e/` at root for Playwright
 8. **Watch mode**: Document `npm run test:watch` for TDD workflow
+9. **E2E server startup**: Playwright uses `webServer` config to auto-start the dev server before tests and shut it down after—no manual server start required
+10. **E2E test data setup**: Tests call seed functions directly in `beforeEach`/`beforeAll` hooks (e.g., `await seedTodos([...])`)—explicit, readable, keeps setup close to test code
+11. **E2E test isolation**: Each test clears the database in `beforeEach` before seeding its own data—ensures test isolation with a known clean state
+12. **Flaky test policy**: No automatic retries—flaky tests should be fixed, not hidden. In a learning environment, we want developers to understand *why* tests fail
+13. **CI browser coverage**: Chromium only—keeps CI fast and simple; cross-browser testing adds complexity without pedagogical value
 
 ## Technology Choices
 
-| Category          | Choice                      | Rationale                                              |
-| ----------------- | --------------------------- | ------------------------------------------------------ |
-| Unit Test Runner  | Jest                        | Industry standard, excellent TS support, good mocking  |
-| Component Testing | React Testing Library       | Encourages accessible, user-centric tests              |
-| E2E Testing       | Playwright                  | Modern, fast, good DX, cross-browser                   |
-| Mocking           | Jest mocks                  | Native Jest mocking for DB in unit tests               |
-| E2E Database      | SQLite (local file)         | Turso-compatible, seedable via `db/seeds/`             |
-| Coverage          | Jest built-in               | `--coverage` flag, no extra deps                       |
-| Accessibility     | jest-axe                    | Automated a11y checks in component tests               |
+| Category          | Choice                | Rationale                                             |
+| ----------------- | --------------------- | ----------------------------------------------------- |
+| Unit Test Runner  | Jest                  | Industry standard, excellent TS support, good mocking |
+| Component Testing | React Testing Library | Encourages accessible, user-centric tests             |
+| E2E Testing       | Playwright            | Modern, fast, good DX, cross-browser                  |
+| Mocking           | Jest mocks            | Native Jest mocking for DB in unit tests              |
+| E2E Database      | SQLite (local file)   | Turso-compatible, seedable via `db/seeds/`            |
+| Coverage          | Jest built-in         | `--coverage` flag, no extra deps                      |
+| Accessibility     | jest-axe              | Automated a11y checks in component tests              |
 
 ## Dependencies
 
