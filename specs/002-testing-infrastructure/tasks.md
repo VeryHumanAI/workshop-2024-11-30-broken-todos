@@ -37,9 +37,9 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Create database mock in db/__mocks__/index.ts (mockInsert, mockSelect, mockUpdate, mockDelete with chainable methods)
+- [ ] T008 Create database mock in db/**mocks**/index.ts (mockInsert, mockSelect, mockUpdate, mockDelete with chainable methods)
 - [ ] T009 Create seed functions in db/seeds/todos.ts (clearTodos, seedTodos, seedTodo per contracts/test-api.md)
-- [ ] T010 Create __tests__ directory at app/__tests__/
+- [ ] T010 Create **tests** directory at app/**tests**/
 - [ ] T011 Create e2e/ directory at repository root
 
 **Checkpoint**: Mock database ready for unit tests, seed functions ready for E2E tests
@@ -54,13 +54,13 @@
 
 ### Implementation for User Story 1
 
-- [ ] T012 [US1] Create server action tests in app/__tests__/actions.test.ts with tests for:
+- [ ] T012 [US1] Create server action tests in app/**tests**/actions.test.ts with tests for:
   - addTodo() inserts with correct description from FormData
   - removeTodoAction() deletes with correct ID
   - toggleTodoAction() updates with correct ID
   - getTodos() selects from todosTable
-- [ ] T013 [US1] Verify mock database intercepts all Drizzle operations (no real Turso calls)
-- [ ] T014 [US1] Verify revalidatePath is called after mutations
+  - ✓ Include assertion that mock database intercepts all Drizzle operations (no real Turso calls)
+  - ✓ Include assertion that revalidatePath is called after mutations
 
 **Checkpoint**: `npm run test:unit` passes with ≥4 server action tests, all using mocked database
 
@@ -74,19 +74,23 @@
 
 ### Implementation for User Story 2
 
-- [ ] T015 [P] [US2] Create Todo component tests in app/__tests__/todo.test.tsx with tests for:
+- [ ] T013 [P] [US2] Create Todo component tests in app/**tests**/todo.test.tsx with tests for:
   - Renders todo description text
   - Displays line-through styling when completed: true
   - Clicking checkbox calls toggleTodoAction with correct ID
   - Clicking delete button calls removeTodoAction with correct ID
   - Has no accessibility violations (jest-axe)
-- [ ] T016 [P] [US2] Create Form component tests in app/__tests__/form.test.tsx with tests for:
+  - ✓ Use waitFor() for useTransition async state updates
+- [ ] T014 [P] [US2] Create TodoList component tests in app/**tests**/todo-list.test.tsx with tests for:
+  - Renders list of todo items
+  - Renders empty state when no todos
+  - Has no accessibility violations (jest-axe)
+- [ ] T015 [P] [US2] Create Form component tests in app/**tests**/form.test.tsx with tests for:
   - Renders input and submit button
   - Submitting form calls addTodo with FormData containing description
   - Has no accessibility violations (jest-axe)
-- [ ] T017 [US2] Verify useTransition handling with waitFor() for async state updates
 
-**Checkpoint**: `npm run test:unit` passes with ≥5 component tests including accessibility checks
+**Checkpoint**: `npm run test:unit` passes with ≥7 component tests including accessibility checks
 
 ---
 
@@ -98,14 +102,14 @@
 
 ### Implementation for User Story 3
 
-- [ ] T018 [US3] Create main E2E test file in e2e/todo-flow.spec.ts with:
+- [ ] T016 [US3] Create main E2E test file in e2e/todo-flow.spec.ts with:
   - beforeEach that clears database using clearTodos()
   - Test: home page loads and shows todo list
   - Test: can add a new todo (type, submit, verify appears)
   - Test: can toggle todo complete (click checkbox, verify line-through)
   - Test: can delete a todo (click delete, verify removed)
-- [ ] T019 [US3] Verify Playwright webServer auto-starts and stops dev server
-- [ ] T020 [US3] Verify seed functions work in E2E context for test data setup
+  - ✓ Verify webServer auto-starts and stops dev server (implicit via `npm run test:e2e`)
+  - ✓ Use seedTodos()/seedTodo() in setup to verify seed functions work in E2E context
 
 **Checkpoint**: `npm run test:e2e` passes with ≥4 E2E tests, server auto-managed
 
@@ -119,13 +123,13 @@
 
 ### Implementation for User Story 4
 
-- [ ] T021 [P] [US4] Update AGENTS.md with TDD workflow section including:
+- [ ] T017 [P] [US4] Update AGENTS.md with TDD workflow section including:
   - Red-Green-Refactor cycle explanation
   - How to run tests in watch mode (`npm run test:watch`)
   - Example of writing a failing test first
   - When to use unit vs component vs E2E tests
-- [ ] T022 [P] [US4] Update constitution.md (.specify/memory/constitution.md) with:
-  - New principle "VI. Test-First Development" 
+- [ ] T018 [P] [US4] Update constitution.md (.specify/memory/constitution.md) with:
+  - New principle "VI. Test-First Development"
   - Rationale for TDD in learning environment
   - Integration with existing principles
 
@@ -141,7 +145,7 @@
 
 ### Implementation for User Story 5
 
-- [ ] T023 [US5] Create GitHub Actions workflow in .github/workflows/test.yml with:
+- [ ] T019 [US5] Create GitHub Actions workflow in .github/workflows/test.yml with:
   - Trigger on pull_request and push to main
   - Setup Node.js and install dependencies
   - Run `npm run test:unit`
@@ -156,11 +160,11 @@
 
 **Purpose**: Validation, cleanup, and documentation finalization
 
-- [ ] T024 Run `npm run test:coverage` and verify coverage report generates in coverage/
-- [ ] T025 Verify all tests complete in <30 seconds total (NFR-001: unit <10s)
-- [ ] T026 Run quickstart.md validation - follow guide to write a new test
-- [ ] T027 Verify database mock stays in sync with schema (mockInsert/Select/Update/Delete match Drizzle patterns)
-- [ ] T028 Final code review: ensure test files follow Clarity Over Cleverness principle with explanatory comments
+- [ ] T020 Run `npm run test:coverage` and verify coverage report generates in coverage/
+- [ ] T021 Verify all tests complete in <30 seconds total (NFR-001: unit <10s)
+- [ ] T022 Run quickstart.md validation - follow guide to write a new test
+- [ ] T023 Verify database mock stays in sync with schema (mockInsert/Select/Update/Delete match Drizzle patterns)
+- [ ] T024 Final code review: ensure test files follow Clarity Over Cleverness principle with explanatory comments
 
 ---
 
@@ -205,9 +209,11 @@ Server Actions             Components              E2E Tests
 ### Parallel Opportunities
 
 **Setup (Phase 1)**:
+
 - T003, T004, T005, T007 can run in parallel (different config files)
 
 **User Stories (after Phase 2)**:
+
 - US1, US2, US3 can run in parallel (different test directories/concerns)
 - Within US2: T015, T016 can run in parallel (different component test files)
 - Within US4: T021, T022 can run in parallel (different doc files)
@@ -247,27 +253,28 @@ Task T016: "Create Form component tests in app/__tests__/form.test.tsx"
 ### Suggested MVP Scope
 
 **Minimum**: Phase 1 + Phase 2 + Phase 3 (User Story 1)
+
 - Delivers: Working Jest setup with server action tests and database mocking
 - Validates: Core testing infrastructure works
-- Time estimate: ~2-3 hours
+- Time estimate: ~2 hours
 
 ---
 
 ## Summary
 
-| Metric | Value |
-|--------|-------|
-| **Total Tasks** | 28 |
-| **Phase 1 (Setup)** | 7 tasks |
-| **Phase 2 (Foundational)** | 4 tasks |
-| **User Story 1 (P1)** | 3 tasks |
-| **User Story 2 (P2)** | 3 tasks |
-| **User Story 3 (P2)** | 3 tasks |
-| **User Story 4 (P3)** | 2 tasks |
-| **User Story 5 (P3)** | 1 task |
-| **Phase 8 (Polish)** | 5 tasks |
-| **Parallel Opportunities** | 12 tasks marked [P] |
-| **MVP Tasks** | 14 tasks (T001-T014) |
+| Metric                     | Value                |
+| -------------------------- | -------------------- |
+| **Total Tasks**            | 24                   |
+| **Phase 1 (Setup)**        | 7 tasks              |
+| **Phase 2 (Foundational)** | 4 tasks              |
+| **User Story 1 (P1)**      | 1 task               |
+| **User Story 2 (P2)**      | 3 tasks              |
+| **User Story 3 (P2)**      | 1 task               |
+| **User Story 4 (P3)**      | 2 tasks              |
+| **User Story 5 (P3)**      | 1 task               |
+| **Phase 8 (Polish)**       | 5 tasks              |
+| **Parallel Opportunities** | 10 tasks marked [P]  |
+| **MVP Tasks**              | 12 tasks (T001-T012) |
 
 ---
 

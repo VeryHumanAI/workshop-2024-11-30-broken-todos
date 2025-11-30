@@ -191,7 +191,6 @@ Tests should automatically run when a pull request is opened, ensuring no broken
 
 - `jest` - Test runner
 - `@types/jest` - TypeScript types
-- `ts-jest` - TypeScript transformer for Jest
 - `jest-environment-jsdom` - Browser-like environment for component tests
 - `@testing-library/react` - Component testing utilities
 - `@testing-library/jest-dom` - Custom matchers for DOM assertions
@@ -206,13 +205,17 @@ app/
 ├── __tests__/                    # Unit and component tests
 │   ├── actions.test.ts           # Server action tests
 │   ├── todo.test.tsx             # Todo component tests
+│   ├── todo-list.test.tsx        # TodoList component tests
 │   └── form.test.tsx             # Form component tests
 db/
+├── __mocks__/                    # Jest mocks for database
+│   └── index.ts                  # Mock Drizzle client
 ├── seeds/                        # Test data seeders
 │   └── todos.ts                  # Seed functions for todo states
 e2e/                              # Playwright E2E tests
 ├── todo-flow.spec.ts             # Main user flow test
 jest.config.ts                    # Jest configuration
+jest.setup.ts                     # Jest setup (matchers, mocks)
 playwright.config.ts              # Playwright configuration
 ```
 
