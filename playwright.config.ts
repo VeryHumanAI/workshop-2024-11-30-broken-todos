@@ -10,6 +10,11 @@
  * @see https://playwright.dev/docs/test-configuration
  */
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+import path from "path";
+
+// Load environment variables for seed functions
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 export default defineConfig({
   // Test directory - all E2E tests live here
