@@ -113,7 +113,7 @@ export function Todo({
       )}
       <div className="flex w-full items-center gap-4">
         {/* Drag Handle */}
-        <DragHandle {...listeners} />
+        <DragHandle listeners={listeners} />
 
         {/* Custom Checkbox */}
         <button

@@ -13,13 +13,14 @@ interface DragHandleProps {
 
 export function DragHandle({ listeners }: DragHandleProps) {
   return (
-    <button
-      type="button"
-      className="mr-2 cursor-grab touch-none text-gray-400 hover:text-gray-600 active:cursor-grabbing"
+    <div
+      className="mr-2 cursor-grab touch-none text-gray-400 select-none hover:text-gray-600 active:cursor-grabbing"
       aria-label="Drag to reorder"
+      role="button"
+      tabIndex={0}
       {...listeners}
     >
       ⋮⋮
-    </button>
+    </div>
   );
 }

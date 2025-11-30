@@ -118,6 +118,7 @@ Tests MUST be written before implementation code (TDD approach).
 - Commit messages MUST follow conventional commits: `type(scope): description`
   - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 - Never commit broken code—run `npm run lint` before every commit
+- **QA Before Commit**: For UI/UX changes, MUST manually verify the feature works in the browser before committing. Passing tests are necessary but not sufficient—if you can't see it work, don't commit it.
 
 ### Code Review Checklist
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useOptimistic, useId } from "react";
+import { useOptimistic, useId, useTransition } from "react";
 import { InferSelectModel } from "drizzle-orm";
 import {
   DndContext,
@@ -28,11 +28,17 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
   const dndContextId = useId();
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px movement required to start drag
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const [, startTransition] = useTransition();
 
   const [optimisticTodos, setOptimisticTodos] = useOptimistic<
     Todo[],
@@ -63,15 +69,15 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
     const oldIndex = optimisticTodos.findIndex((t) => t.id === active.id);
     const newIndex = optimisticTodos.findIndex((t) => t.id === over.id);
 
-    // Optimistic update
-    const movedTodo = optimisticTodos[oldIndex];
-    setOptimisticTodos({ action: "reorder", todo: movedTodo, newIndex });
-
     // Calculate new position
+    const movedTodo = optimisticTodos[oldIndex];
     const newPosition = calculateNewPosition(optimisticTodos, oldIndex, newIndex);
 
-    // Persist to database
-    await reorderTodosAction(active.id as number, newPosition);
+    // Optimistic update + persist to database (wrapped in startTransition via server action)
+    startTransition(async () => {
+      setOptimisticTodos({ action: "reorder", todo: movedTodo, newIndex });
+      await reorderTodosAction(active.id as number, newPosition);
+    });
   };
 
   const calculateNewPosition = (todos: Todo[], fromIndex: number, toIndex: number): number => {
