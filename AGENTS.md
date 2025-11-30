@@ -82,8 +82,8 @@ function formatDate(date: Date): string {
 
 ### When to Use Each Test Type
 
-| Test Type     | Use For                              | Speed  | Command           |
-| ------------- | ------------------------------------ | ------ | ----------------- |
+| Test Type     | Use For                              | Speed  | Command             |
+| ------------- | ------------------------------------ | ------ | ------------------- |
 | **Unit**      | Server actions, pure functions       | Fast   | `npm run test:unit` |
 | **Component** | React components, user interactions  | Medium | `npm run test:unit` |
 | **E2E**       | Full user flows, multi-page journeys | Slow   | `npm run test:e2e`  |

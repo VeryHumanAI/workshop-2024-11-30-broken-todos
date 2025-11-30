@@ -56,8 +56,6 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
-    # Only run E2E if secrets are available (skip for forks/external PRs)
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -74,11 +72,15 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Setup test database
+        run: npx drizzle-kit push
+        env:
+          TURSO_DATABASE_URL: file:./test.db
+
       - name: Run E2E tests
         run: npm run test:e2e
         env:
-          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
-          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          TURSO_DATABASE_URL: file:./test.db
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

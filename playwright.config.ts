@@ -13,8 +13,10 @@ import { defineConfig, devices } from "@playwright/test";
 import dotenv from "dotenv";
 import path from "path";
 
-// Load environment variables for seed functions
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+// Load environment variables for seed functions (only if not already set, e.g., in CI)
+if (!process.env.TURSO_DATABASE_URL) {
+  dotenv.config({ path: path.resolve(__dirname, ".env") });
+}
 
 export default defineConfig({
   // Test directory - all E2E tests live here
@@ -68,5 +70,10 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     // 2 minutes timeout for server startup (Turbopack is fast but give margin)
     timeout: 120 * 1000,
+    // Pass env vars to the dev server (important for CI with local SQLite)
+    env: {
+      TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL!,
+      TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN || "",
+    },
   },
 });
