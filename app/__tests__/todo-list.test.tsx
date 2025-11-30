@@ -28,21 +28,54 @@ jest.mock("../actions", () => ({
   addTodo: jest.fn(),
   toggleTodoAction: jest.fn(),
   removeTodoAction: jest.fn(),
+  getTodos: jest.fn(),
+  reorderTodosAction: jest.fn(),
+}));
+
+// Mock @dnd-kit for drag-drop testing
+jest.mock("@dnd-kit/core", () => ({
+  DndContext: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="dnd-context" data-ondragend={true}>
+      {children}
+    </div>
+  ),
+  closestCenter: jest.fn(),
+  KeyboardSensor: jest.fn(),
+  PointerSensor: jest.fn(),
+  useSensor: jest.fn(() => ({})),
+  useSensors: jest.fn(() => []),
+}));
+
+jest.mock("@dnd-kit/sortable", () => ({
+  SortableContext: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="sortable-context">{children}</div>
+  ),
+  verticalListSortingStrategy: jest.fn(),
+  sortableKeyboardCoordinates: jest.fn(),
+}));
+
+jest.mock("@dnd-kit/utilities", () => ({
+  CSS: {
+    Transform: {
+      toString: jest.fn(() => ""),
+    },
+  },
 }));
 
 // Test fixtures
 const multipleTodos = [
-  { id: 1, description: "Buy groceries", completed: false },
-  { id: 2, description: "Walk the dog", completed: true },
-  { id: 3, description: "Read a book", completed: false },
+  { id: 1, description: "Buy groceries", completed: false, position: 1000 },
+  { id: 2, description: "Walk the dog", completed: true, position: 2000 },
+  { id: 3, description: "Read a book", completed: false, position: 3000 },
 ];
 
-const singleTodo = [{ id: 1, description: "Only todo", completed: false }];
+const singleTodo = [{ id: 1, description: "Only todo", completed: false, position: 1000 }];
 
 const emptyTodos: Array<{
   id: number;
   description: string;
   completed: boolean;
+  position: number;
 }> = [];
 
 describe("TodoList Component", () => {
@@ -104,6 +137,27 @@ describe("TodoList Component", () => {
       render(<TodoList initialTodos={multipleTodos} />);
 
       expect(screen.getByTestId("form")).toBeInTheDocument();
+    });
+  });
+
+  describe("Drag and Drop", () => {
+    test("wraps the list with DndContext", () => {
+      render(<TodoList initialTodos={multipleTodos} />);
+
+      expect(screen.getByTestId("dnd-context")).toBeInTheDocument();
+    });
+
+    test("wraps todos with SortableContext", () => {
+      render(<TodoList initialTodos={multipleTodos} />);
+
+      expect(screen.getByTestId("sortable-context")).toBeInTheDocument();
+    });
+
+    test("DndContext has onDragEnd handler", () => {
+      render(<TodoList initialTodos={multipleTodos} />);
+
+      const dndContext = screen.getByTestId("dnd-context");
+      expect(dndContext).toHaveAttribute("data-ondragend", "true");
     });
   });
 

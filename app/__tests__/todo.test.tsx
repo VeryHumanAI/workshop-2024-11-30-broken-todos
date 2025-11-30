@@ -26,6 +26,23 @@ jest.mock("react-confetti", () => {
   };
 });
 
+// Mock @dnd-kit/sortable for drag-drop functionality
+jest.mock("@dnd-kit/sortable", () => ({
+  useSortable: jest.fn(() => ({
+    attributes: {},
+    listeners: { onClick: jest.fn() },
+    setNodeRef: jest.fn(),
+    transform: null,
+    transition: null,
+    isDragging: false,
+  })),
+  CSS: {
+    Transform: {
+      toString: jest.fn(() => ""),
+    },
+  },
+}));
+
 // Type assertion for mocked functions
 const mockToggleTodoAction = toggleTodoAction as jest.MockedFunction<typeof toggleTodoAction>;
 const mockRemoveTodoAction = removeTodoAction as jest.MockedFunction<typeof removeTodoAction>;
@@ -75,17 +92,28 @@ describe("Todo Component", () => {
       render(<Todo item={completedTodo} />);
 
       // The checkbox button should have a different aria-label when completed
-      expect(
-        screen.getByRole("button", { name: /mark as incomplete/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /mark as incomplete/i })).toBeInTheDocument();
     });
 
     test("shows empty checkbox when todo is incomplete", () => {
       render(<Todo item={incompleteTodo} />);
 
-      expect(
-        screen.getByRole("button", { name: /mark as complete/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /mark as complete/i })).toBeInTheDocument();
+    });
+
+    test("renders drag handle on the left side", () => {
+      render(<Todo item={incompleteTodo} />);
+
+      // Should render the drag handle with grip icon
+      expect(screen.getByText("⋮⋮")).toBeInTheDocument();
+    });
+
+    test("applies sortable attributes to the list item", () => {
+      render(<Todo item={incompleteTodo} />);
+
+      // The li should have the ref and attributes from useSortable
+      const listItem = screen.getByRole("listitem");
+      expect(listItem).toBeInTheDocument();
     });
   });
 

@@ -40,7 +40,9 @@ export const mockInsert = jest.fn().mockReturnValue({
  * Default: returns empty array (no todos)
  */
 export const mockSelect = jest.fn().mockReturnValue({
-  from: jest.fn().mockResolvedValue([]),
+  from: jest.fn().mockReturnValue({
+    orderBy: jest.fn().mockResolvedValue([]),
+  }),
 });
 
 /**
@@ -87,7 +89,9 @@ export function resetMocks(): void {
     values: jest.fn().mockResolvedValue(undefined),
   });
   mockSelect.mockReturnValue({
-    from: jest.fn().mockResolvedValue([]),
+    from: jest.fn().mockReturnValue({
+      orderBy: jest.fn().mockResolvedValue([]),
+    }),
   });
   mockUpdate.mockReturnValue({
     set: jest.fn().mockReturnValue({

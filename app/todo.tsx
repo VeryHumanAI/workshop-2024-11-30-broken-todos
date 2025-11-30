@@ -3,19 +3,37 @@
 import { useTransition, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { InferSelectModel } from "drizzle-orm";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { todosTable } from "@/db/schema";
-import { removeTodoAction, toggleTodoAction } from "./actions";
+import { removeTodoAction, toggleTodoAction, reorderTodosAction } from "./actions";
+import { DragHandle } from "./drag-handle";
 
 // Dynamically import react-confetti to avoid SSR issues
 const ReactConfetti = dynamic(() => import("react-confetti"), {
   ssr: false,
 });
 
-export function Todo({ item }: { item: InferSelectModel<typeof todosTable> }) {
+export function Todo({
+  item,
+  allTodos,
+}: {
+  item: InferSelectModel<typeof todosTable>;
+  allTodos: InferSelectModel<typeof todosTable>[];
+}) {
   const [isPending, startTransition] = useTransition();
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   useEffect(() => {
     // Update window size when mounted
@@ -46,14 +64,74 @@ export function Todo({ item }: { item: InferSelectModel<typeof todosTable> }) {
     });
   };
 
+  const handleKeyDown = async (event: React.KeyboardEvent) => {
+    if (!event.altKey) return;
+
+    const currentIndex = allTodos.findIndex((t) => t.id === item.id);
+    let newIndex = currentIndex;
+
+    if (event.key === "ArrowUp" && currentIndex > 0) {
+      newIndex = currentIndex - 1;
+    } else if (event.key === "ArrowDown" && currentIndex < allTodos.length - 1) {
+      newIndex = currentIndex + 1;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+
+    // Calculate the proper new position (between adjacent items)
+    const newPosition = calculateNewPosition(allTodos, currentIndex, newIndex);
+
+    startTransition(async () => {
+      await reorderTodosAction(item.id, newPosition);
+    });
+  };
+
+  // Calculate a position value between adjacent items for proper ordering
+  const calculateNewPosition = (
+    todos: { position: number }[],
+    fromIndex: number,
+    toIndex: number
+  ): number => {
+    if (toIndex > fromIndex) {
+      // Moving down
+      const before = todos[toIndex];
+      const after = todos[toIndex + 1];
+      if (!after) {
+        return before.position + 1000;
+      }
+      return Math.floor((before.position + after.position) / 2);
+    } else {
+      // Moving up
+      const after = todos[toIndex];
+      const before = todos[toIndex - 1];
+      if (!before) {
+        return Math.floor(after.position / 2);
+      }
+      return Math.floor((before.position + after.position) / 2);
+    }
+  };
+
   const handleRemove = async () => {
     startTransition(async () => {
       await removeTodoAction(item.id);
     });
   };
 
+  // Extract role from attributes to avoid setting role="button" on <li>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { role, ...restAttributes } = attributes;
+
   return (
-    <li className="group flex items-center justify-between px-5 py-4 transition-colors duration-150 hover:bg-slate-50">
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`group flex items-center justify-between px-5 py-4 transition-colors duration-150 hover:bg-slate-50 ${isDragging ? "opacity-50" : ""}`}
+      {...restAttributes}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+    >
       {showConfetti && (
         <ReactConfetti
           width={windowSize.width}
@@ -63,6 +141,9 @@ export function Todo({ item }: { item: InferSelectModel<typeof todosTable> }) {
         />
       )}
       <div className="flex w-full items-center gap-4">
+        {/* Drag Handle */}
+        <DragHandle listeners={listeners} />
+
         {/* Custom Checkbox */}
         <button
           className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all duration-200 ${

@@ -13,7 +13,13 @@
 
 import { revalidatePath } from "next/cache";
 
-import { addTodo, removeTodoAction, toggleTodoAction, getTodos } from "../actions";
+import {
+  addTodo,
+  removeTodoAction,
+  toggleTodoAction,
+  getTodos,
+  reorderTodosAction,
+} from "../actions";
 
 // Tell Jest to use our mock instead of the real database
 // The mock is automatically loaded from db/__mocks__/index.ts
@@ -33,8 +39,12 @@ describe("Server Actions", () => {
   });
 
   describe("addTodo", () => {
-    it("inserts a todo with the correct description from FormData", async () => {
-      // Arrange: Create a FormData object like a real form submission
+    it("inserts a todo with the correct description and position from FormData", async () => {
+      // Arrange: Mock the max position query to return 0 (no existing todos)
+      mockSelect.mockReturnValue({
+        from: jest.fn().mockResolvedValue([{ max: 0 }]),
+      });
+
       const formData = new FormData();
       formData.set("description", "Buy milk");
 
@@ -44,16 +54,20 @@ describe("Server Actions", () => {
       // Assert: Verify db.insert() was called
       expect(mockInsert).toHaveBeenCalled();
 
-      // Assert: Verify .values() was called with correct data
-      // The mock returns an object with a values method, so we check what that was called with
+      // Assert: Verify .values() was called with correct data including position
       const insertResult = mockInsert.mock.results[0].value;
       expect(insertResult.values).toHaveBeenCalledWith({
         description: "Buy milk",
+        position: 1000,
       });
     });
 
     it("calls revalidatePath after inserting", async () => {
-      // Arrange
+      // Arrange: Mock the max position
+      mockSelect.mockReturnValue({
+        from: jest.fn().mockResolvedValue([{ max: 0 }]),
+      });
+
       const formData = new FormData();
       formData.set("description", "Test todo");
 
@@ -62,6 +76,26 @@ describe("Server Actions", () => {
 
       // Assert: Verify the cache is invalidated so the UI updates
       expect(revalidatePath).toHaveBeenCalledWith("/");
+    });
+
+    it("assigns position to new todos based on max existing position", async () => {
+      // Arrange: Mock existing max position of 3000
+      mockSelect.mockReturnValue({
+        from: jest.fn().mockResolvedValue([{ max: 3000 }]),
+      });
+
+      const formData = new FormData();
+      formData.set("description", "New todo");
+
+      // Act
+      await addTodo(formData);
+
+      // Assert: New position should be max + 1000 = 4000
+      const insertResult = mockInsert.mock.results[0].value;
+      expect(insertResult.values).toHaveBeenCalledWith({
+        description: "New todo",
+        position: 4000,
+      });
     });
   });
 
@@ -122,7 +156,13 @@ describe("Server Actions", () => {
     it("selects from the todos table", async () => {
       // Arrange: Configure mock to return some todos
       mockSelect.mockReturnValue({
-        from: jest.fn().mockResolvedValue([{ id: 1, description: "Test todo", completed: false }]),
+        from: jest.fn().mockReturnValue({
+          orderBy: jest
+            .fn()
+            .mockResolvedValue([
+              { id: 1, description: "Test todo", completed: false, position: 1000 },
+            ]),
+        }),
       });
 
       // Act
@@ -136,7 +176,9 @@ describe("Server Actions", () => {
       expect(selectResult.from).toHaveBeenCalled();
 
       // Assert: Verify we got the mocked data back
-      expect(todos).toEqual([{ id: 1, description: "Test todo", completed: false }]);
+      expect(todos).toEqual([
+        { id: 1, description: "Test todo", completed: false, position: 1000 },
+      ]);
     });
 
     it("returns empty array when no todos exist", async () => {
@@ -149,15 +191,84 @@ describe("Server Actions", () => {
       // Assert
       expect(todos).toEqual([]);
     });
+
+    it("orders todos by position ascending", async () => {
+      // Arrange: Mock todos with different positions (out of order)
+      mockSelect.mockReturnValue({
+        from: jest.fn().mockReturnValue({
+          orderBy: jest.fn().mockResolvedValue([
+            { id: 1, description: "First", completed: false, position: 1000 },
+            { id: 2, description: "Second", completed: false, position: 2000 },
+            { id: 3, description: "Third", completed: false, position: 3000 },
+          ]),
+        }),
+      });
+
+      // Act
+      const todos = await getTodos();
+
+      // Assert: Verify orderBy was called
+      const selectResult = mockSelect.mock.results[0].value;
+      const fromResult = selectResult.from.mock.results[0].value;
+      expect(fromResult.orderBy).toHaveBeenCalled();
+
+      // Assert: Todos are returned in position order
+      expect(todos).toEqual([
+        { id: 1, description: "First", completed: false, position: 1000 },
+        { id: 2, description: "Second", completed: false, position: 2000 },
+        { id: 3, description: "Third", completed: false, position: 3000 },
+      ]);
+    });
+  });
+
+  describe("reorderTodosAction", () => {
+    it("updates a todo's position and calls revalidatePath", async () => {
+      // Arrange
+      const todoId = 5;
+      const newPosition = 2500;
+
+      // Act
+      await reorderTodosAction(todoId, newPosition);
+
+      // Assert: Verify db.update() was called
+      expect(mockUpdate).toHaveBeenCalled();
+
+      // Assert: Verify the chain .set().where() was called with correct values
+      const updateResult = mockUpdate.mock.results[0].value;
+      expect(updateResult.set).toHaveBeenCalledWith({ position: newPosition });
+
+      const setResult = updateResult.set.mock.results[0].value;
+      expect(setResult.where).toHaveBeenCalled();
+
+      // Assert: Verify revalidatePath was called
+      expect(revalidatePath).toHaveBeenCalledWith("/");
+    });
   });
 
   // This test verifies our mocking strategy works correctly
   describe("Mock Database Verification", () => {
     it("intercepts all Drizzle operations (no real Turso calls)", async () => {
-      // This test confirms that all database operations go through our mock.
-      // If any operation hit the real database, it would either:
-      // 1. Fail (no database connection in test environment)
-      // 2. Not trigger our mock assertions
+      // Set up mocks for all operations
+      mockSelect
+        .mockReturnValueOnce({
+          from: jest.fn().mockResolvedValue([{ max: 0 }]), // for addTodo max select
+        })
+        .mockReturnValue({
+          from: jest.fn().mockReturnValue({
+            orderBy: jest.fn().mockResolvedValue([]), // for getTodos
+          }),
+        });
+      mockInsert.mockReturnValue({
+        values: jest.fn().mockResolvedValue(undefined),
+      });
+      mockUpdate.mockReturnValue({
+        set: jest.fn().mockReturnValue({
+          where: jest.fn().mockResolvedValue(undefined),
+        }),
+      });
+      mockDelete.mockReturnValue({
+        where: jest.fn().mockResolvedValue(undefined),
+      });
 
       const formData = new FormData();
       formData.set("description", "Verify mocking");
@@ -170,7 +281,7 @@ describe("Server Actions", () => {
 
       // All operations should have been intercepted
       expect(mockInsert).toHaveBeenCalledTimes(1);
-      expect(mockSelect).toHaveBeenCalledTimes(1);
+      expect(mockSelect).toHaveBeenCalledTimes(2); // once for max, once for getTodos
       expect(mockUpdate).toHaveBeenCalledTimes(1);
       expect(mockDelete).toHaveBeenCalledTimes(1);
     });
