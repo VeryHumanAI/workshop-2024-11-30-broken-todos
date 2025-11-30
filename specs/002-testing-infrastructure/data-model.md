@@ -11,11 +11,11 @@ This feature adds testing infrastructure but does not modify the existing data m
 
 ### Todo (from `db/schema.ts`)
 
-| Field | Type | Constraints | Notes |
-|-------|------|-------------|-------|
-| `id` | integer | PRIMARY KEY, AUTO INCREMENT | Unique identifier |
-| `description` | text | NOT NULL | Todo item text |
-| `completed` | integer (boolean mode) | NOT NULL, DEFAULT false | Completion status |
+| Field         | Type                   | Constraints                 | Notes             |
+| ------------- | ---------------------- | --------------------------- | ----------------- |
+| `id`          | integer                | PRIMARY KEY, AUTO INCREMENT | Unique identifier |
+| `description` | text                   | NOT NULL                    | Todo item text    |
+| `completed`   | integer (boolean mode) | NOT NULL, DEFAULT false     | Completion status |
 
 ```typescript
 // Existing schema - no changes
@@ -38,11 +38,11 @@ type MockTodo = {
   id: number;
   description: string;
   completed: boolean;
-}
+};
 
 // Example fixtures
-const incompleteTodo: MockTodo = { id: 1, description: 'Buy milk', completed: false }
-const completedTodo: MockTodo = { id: 2, description: 'Walk dog', completed: true }
+const incompleteTodo: MockTodo = { id: 1, description: "Buy milk", completed: false };
+const completedTodo: MockTodo = { id: 2, description: "Walk dog", completed: true };
 ```
 
 ### SeedTodoInput (Seed Function Input)
@@ -53,13 +53,13 @@ Input type for seed functions that populate the database in E2E tests.
 type SeedTodoInput = {
   description: string;
   completed?: boolean; // Defaults to false
-}
+};
 
 // Usage in E2E tests
 await seedTodos([
-  { description: 'Buy groceries' },
-  { description: 'Finish report', completed: true },
-])
+  { description: "Buy groceries" },
+  { description: "Finish report", completed: true },
+]);
 ```
 
 ## Test Data States
@@ -68,44 +68,40 @@ await seedTodos([
 
 ```typescript
 // No todos in database
-await clearTodos()
+await clearTodos();
 ```
 
 ### State: Single Incomplete Todo
 
 ```typescript
-await seedTodos([{ description: 'Buy milk', completed: false }])
+await seedTodos([{ description: "Buy milk", completed: false }]);
 ```
 
 ### State: Mixed Completion Status
 
 ```typescript
 await seedTodos([
-  { description: 'Incomplete task', completed: false },
-  { description: 'Completed task', completed: true },
-])
+  { description: "Incomplete task", completed: false },
+  { description: "Completed task", completed: true },
+]);
 ```
 
 ### State: Multiple Todos
 
 ```typescript
-await seedTodos([
-  { description: 'Task 1' },
-  { description: 'Task 2' },
-  { description: 'Task 3' },
-])
+await seedTodos([{ description: "Task 1" }, { description: "Task 2" }, { description: "Task 3" }]);
 ```
 
 ## Mock Database Operations
 
 The mock database tracks the following operations for assertion:
 
-| Operation | Mock Function | Returns |
-|-----------|---------------|---------|
-| `db.insert(table).values(data)` | `mockInsert` | `void` |
-| `db.select().from(table)` | `mockSelect` | `Todo[]` |
-| `db.update(table).set(data).where(condition)` | `mockUpdate` | `void` |
-| `db.delete(table).where(condition)` | `mockDelete` | `void` |
+| Operation                                     | Mock Function | Returns  |
+| --------------------------------------------- | ------------- | -------- |
+| `db.insert(table).values(data)`               | `mockInsert`  | `void`   |
+| `db.select().from(table)`                     | `mockSelect`  | `Todo[]` |
+| `db.update(table).set(data).where(condition)` | `mockUpdate`  | `void`   |
+| `db.delete(table).where(condition)`           | `mockDelete`  | `void`   |
 
 ## Validation Rules
 
@@ -122,6 +118,6 @@ Tests will verify the following state transitions:
 [Not Exists] --addTodo--> [Incomplete Todo] --toggleTodo--> [Completed Todo]
                                     ^                              |
                                     |--------toggleTodo------------|
-                                    
+
 [Any Todo] --removeTodo--> [Not Exists]
 ```

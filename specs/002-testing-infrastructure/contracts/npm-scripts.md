@@ -27,11 +27,12 @@ Defines the npm scripts that must be available after implementation.
 
 **Command**: `npm run test:e2e`  
 **Description**: Run Playwright end-to-end tests  
-**Behavior**: 
+**Behavior**:
+
 1. Auto-starts Next.js dev server via `webServer` config
 2. Executes all `*.spec.ts` files in `e2e/` directory
 3. Shuts down dev server after tests complete  
-**Exit Code**: 0 if all tests pass, non-zero if any fail
+   **Exit Code**: 0 if all tests pass, non-zero if any fail
 
 ### `test:watch`
 

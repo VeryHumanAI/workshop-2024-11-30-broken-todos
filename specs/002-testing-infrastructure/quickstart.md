@@ -57,31 +57,31 @@ View report at `coverage/lcov-report/index.html`.
 
 ```typescript
 // app/__tests__/actions.test.ts
-import { addTodo, getTodos } from '../actions'
-import { mockInsert, mockSelect } from '@/db'
+import { addTodo, getTodos } from "../actions";
+import { mockInsert, mockSelect } from "@/db";
 
 // Mock the database
-jest.mock('@/db')
+jest.mock("@/db");
 
-describe('addTodo', () => {
+describe("addTodo", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
-  test('inserts todo with description from FormData', async () => {
-    const formData = new FormData()
-    formData.set('description', 'Buy milk')
+  test("inserts todo with description from FormData", async () => {
+    const formData = new FormData();
+    formData.set("description", "Buy milk");
 
-    await addTodo(formData)
+    await addTodo(formData);
 
-    expect(mockInsert).toHaveBeenCalled()
+    expect(mockInsert).toHaveBeenCalled();
     // Verify the values passed to insert
-    const valuesCall = mockInsert.mock.results[0].value.values
+    const valuesCall = mockInsert.mock.results[0].value.values;
     expect(valuesCall).toHaveBeenCalledWith({
-      description: 'Buy milk',
-    })
-  })
-})
+      description: "Buy milk",
+    });
+  });
+});
 ```
 
 ### Testing a React Component
@@ -143,54 +143,54 @@ test('Todo component has no accessibility violations', async () => {
 
 ```typescript
 // e2e/todo-flow.spec.ts
-import { test, expect } from '@playwright/test'
-import { clearTodos, seedTodos } from '../db/seeds/todos'
+import { test, expect } from "@playwright/test";
+import { clearTodos, seedTodos } from "../db/seeds/todos";
 
-test.describe('Todo App', () => {
+test.describe("Todo App", () => {
   test.beforeEach(async () => {
     // Clear database before each test
-    await clearTodos()
-  })
+    await clearTodos();
+  });
 
-  test('can add a new todo', async ({ page }) => {
-    await page.goto('/')
+  test("can add a new todo", async ({ page }) => {
+    await page.goto("/");
 
     // Type in the input and submit
-    await page.fill('input[name="description"]', 'Buy milk')
-    await page.click('button[type="submit"]')
+    await page.fill('input[name="description"]', "Buy milk");
+    await page.click('button[type="submit"]');
 
     // Verify todo appears
-    await expect(page.getByText('Buy milk')).toBeVisible()
-  })
+    await expect(page.getByText("Buy milk")).toBeVisible();
+  });
 
-  test('can toggle a todo complete', async ({ page }) => {
+  test("can toggle a todo complete", async ({ page }) => {
     // Seed a todo first
-    await seedTodos([{ description: 'Walk the dog' }])
+    await seedTodos([{ description: "Walk the dog" }]);
 
-    await page.goto('/')
+    await page.goto("/");
 
     // Click the checkbox
-    await page.click('button[aria-label="Mark as complete"]')
+    await page.click('button[aria-label="Mark as complete"]');
 
     // Verify it shows as completed (line-through style)
-    const todoText = page.locator('span', { hasText: 'Walk the dog' })
-    await expect(todoText).toHaveCSS('text-decoration-line', 'line-through')
-  })
+    const todoText = page.locator("span", { hasText: "Walk the dog" });
+    await expect(todoText).toHaveCSS("text-decoration-line", "line-through");
+  });
 
-  test('can delete a todo', async ({ page }) => {
-    await seedTodos([{ description: 'Buy groceries' }])
+  test("can delete a todo", async ({ page }) => {
+    await seedTodos([{ description: "Buy groceries" }]);
 
-    await page.goto('/')
+    await page.goto("/");
 
     // Hover to reveal delete button, then click
-    const todoItem = page.getByRole('listitem').filter({ hasText: 'Buy groceries' })
-    await todoItem.hover()
-    await todoItem.getByRole('button', { name: /delete/i }).click()
+    const todoItem = page.getByRole("listitem").filter({ hasText: "Buy groceries" });
+    await todoItem.hover();
+    await todoItem.getByRole("button", { name: /delete/i }).click();
 
     // Verify todo is removed
-    await expect(page.getByText('Buy groceries')).not.toBeVisible()
-  })
-})
+    await expect(page.getByText("Buy groceries")).not.toBeVisible();
+  });
+});
 ```
 
 ---
@@ -250,6 +250,7 @@ playwright.config.ts              # Playwright configuration
 ### "Cannot find module '@/db'"
 
 Ensure Jest is using the path alias. Check `jest.config.ts` has:
+
 ```typescript
 moduleNameMapper: {
   '^@/(.*)$': '<rootDir>/$1',
@@ -259,22 +260,25 @@ moduleNameMapper: {
 ### "ReferenceError: window is not defined"
 
 Ensure the test file is using jsdom environment. Check `jest.config.ts` has:
+
 ```typescript
-testEnvironment: 'jsdom'
+testEnvironment: "jsdom";
 ```
 
 ### "Server Actions cannot be called from client"
 
 Mock the server actions in your test file:
+
 ```typescript
-jest.mock('../actions', () => ({
+jest.mock("../actions", () => ({
   toggleTodoAction: jest.fn(),
-}))
+}));
 ```
 
 ### Playwright times out waiting for server
 
 Increase the timeout in `playwright.config.ts`:
+
 ```typescript
 webServer: {
   timeout: 180 * 1000, // 3 minutes
