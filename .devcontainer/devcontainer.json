@@ -2,7 +2,8 @@
   "name": "VeryHumanAI - Workshop 2025-11-30 - Broken Todos",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/astral-sh/uv-devcontainer-features/uv:1": {}
   },
   "customizations": {
     "vscode": {
