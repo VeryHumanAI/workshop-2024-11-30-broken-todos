@@ -65,7 +65,7 @@ As a keyboard user or screen reader user, I want to be able to reorder todos wit
 
 **Acceptance Scenarios**:
 
-1. **Given** I focus on a todo item using keyboard navigation, **When** I use designated keyboard shortcuts (e.g., arrow keys with modifier), **Then** I can move the item up or down in the list
+1. **Given** I focus on a todo item using keyboard navigation, **When** I press Alt + Arrow Up or Alt + Arrow Down, **Then** the todo moves up or down in the list accordingly
 2. **Given** I am using a screen reader, **When** I reorder an item, **Then** the screen reader announces the new position
 
 ---
@@ -84,19 +84,26 @@ As a keyboard user or screen reader user, I want to be able to reorder todos wit
 
 - **FR-001**: System MUST allow users to drag any todo item in the list
 - **FR-002**: System MUST allow users to drop a todo item at any position in the list
-- **FR-003**: System MUST visually indicate when a todo is being dragged (drag handle or entire item)
+- **FR-003**: System MUST display a dedicated drag handle (grip icon) on the left side of each todo item to initiate dragging
 - **FR-004**: System MUST show a drop indicator to preview where the item will be placed
 - **FR-005**: System MUST update the list order immediately upon drop (optimistic UI)
 - **FR-006**: System MUST persist the new order to the database after each reorder
 - **FR-007**: System MUST restore todos in the persisted order when the page loads
 - **FR-008**: System MUST handle drag cancellation (dropping outside valid area) by reverting position
-- **FR-009**: System MUST support keyboard-based reordering for accessibility
+- **FR-009**: System MUST support keyboard-based reordering using Alt + Arrow Up/Down while a todo is focused
 - **FR-010**: System MUST preserve relative order when new todos are added (new todos appear at end)
 
 ### Key Entities
 
 - **Todo**: Extended with a `position` or `order` attribute representing its place in the list (integer or sortable key). The position determines the display order when fetching todos.
 - **Reorder Operation**: Conceptual operation that updates the position of one or more todos when a drag-drop completes.
+
+## Clarifications
+
+### Session 2025-11-30
+
+- Q: How should the drag interaction be initiated? → A: Dedicated drag handle (grip icon) on the left side of each todo
+- Q: What keyboard shortcut should be used for reordering todos? → A: Alt + Arrow Up/Down to move the focused todo
 
 ## Success Criteria _(mandatory)_
 
