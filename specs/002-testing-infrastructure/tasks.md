@@ -19,13 +19,13 @@
 
 **Purpose**: Install dependencies and create base configuration files
 
-- [ ] T001 Install Jest and React Testing Library dependencies via npm (jest, @types/jest, jest-environment-jsdom, @testing-library/react, @testing-library/jest-dom, @testing-library/user-event, jest-axe, @types/jest-axe)
-- [ ] T002 Install Playwright dependency via npm (@playwright/test) and run `npx playwright install chromium`
-- [ ] T003 [P] Create Jest configuration in jest.config.ts (using next/jest preset per contracts/config-files.md)
-- [ ] T004 [P] Create Jest setup file in jest.setup.ts (jest-dom matchers, jest-axe, next/cache mock)
-- [ ] T005 [P] Create Playwright configuration in playwright.config.ts (webServer auto-start, Chromium only, retries: 0)
-- [ ] T006 Add test scripts to package.json (test, test:unit, test:e2e, test:watch, test:coverage per contracts/npm-scripts.md)
-- [ ] T007 [P] Update .gitignore with test artifacts (coverage/, playwright-report/, test-results/)
+- [x] T001 Install Jest and React Testing Library dependencies via npm (jest, @types/jest, jest-environment-jsdom, @testing-library/react, @testing-library/jest-dom, @testing-library/user-event, jest-axe, @types/jest-axe)
+- [x] T002 Install Playwright dependency via npm (@playwright/test) and run `npx playwright install chromium`
+- [x] T003 [P] Create Jest configuration in jest.config.ts (using next/jest preset per contracts/config-files.md)
+- [x] T004 [P] Create Jest setup file in jest.setup.ts (jest-dom matchers, jest-axe, next/cache mock)
+- [x] T005 [P] Create Playwright configuration in playwright.config.ts (webServer auto-start, Chromium only, retries: 0)
+- [x] T006 Add test scripts to package.json (test, test:unit, test:e2e, test:watch, test:coverage per contracts/npm-scripts.md)
+- [x] T007 [P] Update .gitignore with test artifacts (coverage/, playwright-report/, test-results/)
 
 **Checkpoint**: `npm run test:unit` should run (with no tests yet) and `npm run test:e2e` should start dev server
 
@@ -37,10 +37,10 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Create database mock in db/**mocks**/index.ts (mockInsert, mockSelect, mockUpdate, mockDelete with chainable methods)
-- [ ] T009 Create seed functions in db/seeds/todos.ts (clearTodos, seedTodos, seedTodo per contracts/test-api.md)
-- [ ] T010 Create **tests** directory at app/**tests**/
-- [ ] T011 Create e2e/ directory at repository root
+- [x] T008 Create database mock in db/**mocks**/index.ts (mockInsert, mockSelect, mockUpdate, mockDelete with chainable methods)
+- [x] T009 Create seed functions in db/seeds/todos.ts (clearTodos, seedTodos, seedTodo per contracts/test-api.md)
+- [x] T010 Create **tests** directory at app/**tests**/
+- [x] T011 Create e2e/ directory at repository root
 
 **Checkpoint**: Mock database ready for unit tests, seed functions ready for E2E tests
 
@@ -54,7 +54,7 @@
 
 ### Implementation for User Story 1
 
-- [ ] T012 [US1] Create server action tests in app/**tests**/actions.test.ts with tests for:
+- [X] T012 [US1] Create server action tests in app/**tests**/actions.test.ts with tests for:
   - addTodo() inserts with correct description from FormData
   - removeTodoAction() deletes with correct ID
   - toggleTodoAction() updates with correct ID
