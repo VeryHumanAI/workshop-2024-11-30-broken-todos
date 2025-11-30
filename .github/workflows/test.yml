@@ -1,4 +1,4 @@
-name: Test
+name: CI
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,8 +26,50 @@ jobs:
       - name: Run linter
         run: npm run lint
 
+  unit-tests:
+    name: Unit & Component Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run unit & component tests
         run: npm run test:unit
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    # Only run E2E if secrets are available (skip for forks/external PRs)
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -35,17 +77,15 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
         env:
-          # E2E tests need database connection
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
 
-      - name: Upload test results
+      - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results
+          name: playwright-report
           path: |
-            coverage/
             playwright-report/
             test-results/
           retention-days: 7
