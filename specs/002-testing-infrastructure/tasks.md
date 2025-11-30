@@ -145,7 +145,7 @@
 
 ### Implementation for User Story 5
 
-- [ ] T019 [US5] Create GitHub Actions workflow in .github/workflows/test.yml with:
+- [x] T019 [US5] Create GitHub Actions workflow in .github/workflows/test.yml with:
   - Trigger on pull_request and push to main
   - Setup Node.js and install dependencies
   - Run `npm run test:unit`
