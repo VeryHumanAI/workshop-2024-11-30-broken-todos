@@ -80,12 +80,37 @@ export function Todo({
 
     event.preventDefault();
 
-    const adjacentTodo = allTodos[newIndex];
-    const newPosition = adjacentTodo.position;
+    // Calculate the proper new position (between adjacent items)
+    const newPosition = calculateNewPosition(allTodos, currentIndex, newIndex);
 
     startTransition(async () => {
       await reorderTodosAction(item.id, newPosition);
     });
+  };
+
+  // Calculate a position value between adjacent items for proper ordering
+  const calculateNewPosition = (
+    todos: { position: number }[],
+    fromIndex: number,
+    toIndex: number
+  ): number => {
+    if (toIndex > fromIndex) {
+      // Moving down
+      const before = todos[toIndex];
+      const after = todos[toIndex + 1];
+      if (!after) {
+        return before.position + 1000;
+      }
+      return Math.floor((before.position + after.position) / 2);
+    } else {
+      // Moving up
+      const after = todos[toIndex];
+      const before = todos[toIndex - 1];
+      if (!before) {
+        return Math.floor(after.position / 2);
+      }
+      return Math.floor((before.position + after.position) / 2);
+    }
   };
 
   const handleRemove = async () => {
@@ -94,12 +119,16 @@ export function Todo({
     });
   };
 
+  // Extract role from attributes to avoid setting role="button" on <li>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { role, ...restAttributes } = attributes;
+
   return (
     <li
       ref={setNodeRef}
       style={style}
       className={`group flex items-center justify-between px-5 py-4 transition-colors duration-150 hover:bg-slate-50 ${isDragging ? "opacity-50" : ""}`}
-      {...attributes}
+      {...restAttributes}
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >

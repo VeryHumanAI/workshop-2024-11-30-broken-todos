@@ -58,10 +58,12 @@ export async function seedTodos(
 ): Promise<void> {
   if (todos.length === 0) return;
 
-  // Map to include default completed: false
-  const todosWithDefaults = todos.map((todo) => ({
+  // Map to include default completed: false and proper position values
+  // Position values are spaced by 1000 to allow for reordering between items
+  const todosWithDefaults = todos.map((todo, index) => ({
     description: todo.description,
     completed: todo.completed ?? false,
+    position: (index + 1) * 1000,
   }));
 
   await db.insert(todosTable).values(todosWithDefaults);
@@ -84,12 +86,13 @@ export async function seedTodos(
 export async function seedTodo(todo: {
   description: string;
   completed?: boolean;
-}): Promise<{ id: number; description: string; completed: boolean }> {
+}): Promise<{ id: number; description: string; completed: boolean; position: number }> {
   const result = await db
     .insert(todosTable)
     .values({
       description: todo.description,
       completed: todo.completed ?? false,
+      position: 1000, // Default position for single seed
     })
     .returning();
 
