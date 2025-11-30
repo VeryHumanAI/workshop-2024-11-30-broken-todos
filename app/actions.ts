@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq, not, asc, sql } from "drizzle-orm";
+import { eq, asc, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import { todosTable } from "@/db/schema";
@@ -21,17 +21,22 @@ export async function addTodo(formData: FormData) {
 }
 
 export async function removeTodoAction(id: number) {
-  await db.delete(todosTable).where(eq(todosTable.id, id));
+  // Remove the todo from database
+  db.delete(todosTable).where(eq(todosTable.id, id));
 
   revalidatePath("/");
 }
 
 export async function toggleTodoAction(id: number) {
-  await db
-    .update(todosTable)
-    .set({
-      completed: not(todosTable.completed),
-    })
+  // Get current state and toggle it
+  const todo = await db.select().from(todosTable).where(eq(todosTable.id, id));
+  if (todo.length === 0) return;
+  
+  const newCompleted = !todo[0].completed;
+  
+  // Update the todo
+  db.update(todosTable)
+    .set({ completed: newCompleted })
     .where(eq(todosTable.id, id));
 
   revalidatePath("/");

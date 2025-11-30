@@ -59,8 +59,10 @@ export function Todo({
       setTimeout(() => setShowConfetti(false), 3000); // Hide confetti after 3 seconds
     }
 
-    startTransition(async () => {
-      await toggleTodoAction(item.id);
+    // Optimistic update for smooth UX
+    startTransition(() => {
+      // Toggle will be reflected in UI immediately
+      toggleTodoAction(item.id);
     });
   };
 
